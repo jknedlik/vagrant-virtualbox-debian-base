@@ -317,11 +317,19 @@ if ! VBoxManage showvminfo "${BOX}" >/dev/null 2>&1; then
     --pae off \
     --rtcuseutc on
 
-  VBoxManage storagectl "${BOX}" \
-    --name "IDE Controller" \
-    --add ide \
-    --controller PIIX4 \
-    --hostiocache on
+
+    VBoxManage storagectl "${BOX}" \
+      --name "IDE Controller" \
+      --add ide \
+      --controller PIIX4 \
+      --hostiocache on
+
+    VBoxManage storageattach "${BOX}" \
+      --storagectl "IDE Controller" \
+      --port 1 \
+      --device 1 \
+      --type dvddrive \
+      --medium "${VBOX_GUEST_ADDITIONS}"
 
   VBoxManage storageattach "${BOX}" \
     --storagectl "IDE Controller" \
@@ -348,12 +356,9 @@ if ! VBoxManage showvminfo "${BOX}" >/dev/null 2>&1; then
     --type hdd \
     --medium "${FOLDER_VBOX}/${BOX}/${BOX}.vdi"
 
-    VBoxManage storageattach "${BOX}" \
-      --storagectl "IDE Controller" \
-      --port 1 \
-      --device 0 \
-      --type dvddrive \
-      --medium "${VBOX_GUEST_ADDITIONS}"
+
+
+    #  VBoxmanage modifyvm "${BOX}" -boot1 disk
   ${STARTVM}
 
   echo -n "Waiting for installer to finish "

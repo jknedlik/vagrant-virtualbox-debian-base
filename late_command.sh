@@ -24,3 +24,5 @@ update-grub
 
 # clean up
 apt-get clean
+
+/media/cdrom/VBoxLinuxAdditions.run

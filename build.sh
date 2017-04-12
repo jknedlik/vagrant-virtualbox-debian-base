@@ -348,6 +348,12 @@ if ! VBoxManage showvminfo "${BOX}" >/dev/null 2>&1; then
     --type hdd \
     --medium "${FOLDER_VBOX}/${BOX}/${BOX}.vdi"
 
+    VBoxManage storageattach "${BOX}" \
+      --storagectl "IDE Controller" \
+      --port 1 \
+      --device 0 \
+      --type dvddrive \
+      --medium "${VBOX_GUEST_ADDITIONS}"
   ${STARTVM}
 
   echo -n "Waiting for installer to finish "
@@ -355,64 +361,20 @@ if ! VBoxManage showvminfo "${BOX}" >/dev/null 2>&1; then
     sleep 20
     echo -n "."
   done
-  echo ""
 
-  VBoxManage storageattach "${BOX}" \
-    --storagectl "IDE Controller" \
-    --port 1 \
-    --device 0 \
-    --type dvddrive \
-    --medium emptydrive
+
+
+      ${STOPVM}
+        echo "Stopping VM ..."
+      # eject the guest addition DVD
+      VBoxManage storageattach "${BOX}" \
+        --storagectl "IDE Controller" \
+        --port 1 \
+        --device 0 \
+        --type dvddrive \
+        --medium emptydrive
 
   # compact virtual disk of newly created VM
-  COMPACTVDI=1
-fi
-
-if [ -n "${ANSIBLE_PLAYBOOK}" ]; then
-  # Run an ansible playbook
-  echo "127.0.0.1:${ANSIBLE_SSHPORT}" > host.ini
-
-  # if ansible has errors, login to the runnig box with:
-  # ssh -p ${ANSIBLE_SSHPORT} ${ANSIBLE_USER}@localhost
-  # and inspect the machine.
-  # See above for definitions of ANSIBLE_SSHPORT and ANSIBLE_USER.
-  VBoxManage modifyvm "${BOX}" \
-    --natpf1 "ssh,tcp,,${ANSIBLE_SSHPORT},,22"
-
-  # mount VBox Guest Additions to allow install or upgrade with ansible
-  VBoxManage storageattach "${BOX}" \
-    --storagectl "IDE Controller" \
-    --port 1 \
-    --device 0 \
-    --type dvddrive \
-    --medium "${VBOX_GUEST_ADDITIONS}"
-
-  ${STARTVM}
-  echo "Waiting for VM ssh server "
-  while ! ansible all -i host.ini -m ping --user ${ANSIBLE_USER} >/dev/null 2>&1; do
-    sleep 1
-    echo -n "."
-  done
-  echo ""
-  echo "Running Ansible Playbook ..."
-  ansible-playbook -i host.ini "${ANSIBLE_PLAYBOOK}"
-
-  echo "Stopping VM ..."
-  ${STOPVM}
-
-  # remove the above added NAT rule
-  VBoxManage modifyvm "${BOX}" \
-    --natpf1 delete ssh
-
-  # eject the guest addition DVD
-  VBoxManage storageattach "${BOX}" \
-    --storagectl "IDE Controller" \
-    --port 1 \
-    --device 0 \
-    --type dvddrive \
-    --medium emptydrive
-
-  # compact virtual disk of modified VM
   COMPACTVDI=1
 fi
 

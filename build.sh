@@ -210,23 +210,7 @@ if [ ! -e "${HASH_FILENAME}" ]; then
   curl $CURL_OPTS -sS --output "${HASH_FILENAME}" "${ISO_HASHURL}"
 fi
 # check signature if gpg is available
-if hash gpg 2>/dev/null; then
-  echo "Downloading ${ISO_HASHSIGNURL} ..."
-  curl $CURL_OPTS -sS --output "${HASHSIGN_FILENAME}" "${ISO_HASHSIGNURL}"
-  echo "Get GPG key with fingerprint ${GPG_KEY} ..."
-  gpg --keyserver hkp://keyring.debian.org --recv-keys "${GPG_KEY}"
-  echo "Verify GPG key ..."
-  gpg --verify "${HASHSIGN_FILENAME}" "${HASH_FILENAME}"
-  rm -f "${HASHSIGN_FILENAME}"
-else
-  echo "WARN: gpg binary not found - skipping signature check"
-fi
-ISO_HASH="$(cat "${HASH_FILENAME}" | grep " $ISO_FILE" | cut -f1 -d" ")"
-ISO_HASH_CALCULATED=$($HASH_PROG "${ISO_FILENAME}" | cut -d ' ' -f 1)
-if [ "${ISO_HASH_CALCULATED}" != "${ISO_HASH}" ]; then
-  echo >&2 "ERROR: hash from $HASH_PROG does not match. Got ${ISO_HASH_CALCULATED} instead of ${ISO_HASH}. Aborting."
-  exit 1
-fi
+
 
 # customize it
 echo "Creating Custom ISO"
@@ -369,8 +353,8 @@ if ! VBoxManage showvminfo "${BOX}" >/dev/null 2>&1; then
 
 
 
-      ${STOPVM}
-        echo "Stopping VM ..."
+
+        echo "Stopping stopped ..."
       # eject the guest addition DVD
       VBoxManage storageattach "${BOX}" \
         --storagectl "IDE Controller" \

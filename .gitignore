@@ -6,3 +6,4 @@ local/
 host.ini
 *.box
 *.sw?
+vbox/

@@ -22,7 +22,4 @@ sed -i \
   /etc/default/grub
 update-grub
 
-# clean up
-apt-get clean
-
-/media/cdrom/VBoxLinuxAdditions.run
+# clean upn

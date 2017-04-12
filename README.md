@@ -17,7 +17,7 @@ This script will:
 
 ## Configuration
 
- 1. set the password or MD5 hash of the deploy user in preseed.cfg
+ 1. set the password or MD5 hash of the vagrant user in preseed.cfg
  2. optional: adjust locale of timezone values in preseed.cfg
 
 ## Usage on OSX
@@ -86,6 +86,6 @@ The following variables are supported:
 ### Notes
 
 When the ansible playbook has errors, login to the running machine with
-`ssh -p ${ANSIBLE_SSHPORT} deploy@localhost` for inspection or debugging.
+`ssh -p ${ANSIBLE_SSHPORT} vagrant@localhost` for inspection or debugging.
 
 This script is based on original Carl's [repo](https://github.com/cal/vagrant-ubuntu-precise-64) and with some tweaks to be Debian compatible.

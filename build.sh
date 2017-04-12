@@ -128,7 +128,7 @@ ANSIBLE_PLAYBOOK="${ANSIBLE_PLAYBOOK:-}"
 # Env option: local SSH port for ansible
 ANSIBLE_SSHPORT="${ANSIBLE_SSHPORT:-2222}"
 # local SSH user for ansible
-ANSIBLE_USER="deploy"
+ANSIBLE_USER="vagrant"
 
 # location, location, location
 FOLDER_BASE=$(pwd)
